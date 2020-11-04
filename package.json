@@ -1,0 +1,18 @@
+{
+    "name": "tic-tac-toe",
+    "version": "1.0.0",
+    "description": "Play tic tac toe against a computer",
+    "main": "",
+    "scripts": {
+        "dev": "npx browser-sync start --server -f -w",
+        "test": "jest"
+    },
+    "author": "Tony Oreglia",
+    "license": "MIT",
+    "dependencies": {
+        "browser-sync": "^2.26.13"
+    },
+    "devDependencies": {
+        "jest": "^26.6.1"
+    }
+}
