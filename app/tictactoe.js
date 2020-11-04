@@ -129,7 +129,7 @@ class TicTacToeBoard {
         }
         if (depth === 1 && this.computerMove === null) {
             this.computerMove =
-                goodMoves.lenght > 0
+                goodMoves.length > 0
                     ? goodMoves[getRandomInt(goodMoves.length)]
                     : legalMoves[getRandomInt(legalMoves.length)];
         }
@@ -146,7 +146,7 @@ class TicTacToeBoard {
     }
 
     thisIsAWinningPosition() {
-        return this.whichSideIsWinning() !== -1;
+        return this.whichSideIsWinning() !== CATS_GAME;
     }
 
     whichSideIsWinning() {
@@ -156,7 +156,7 @@ class TicTacToeBoard {
         if (this.isWinning(CROSS)) {
             return CROSS;
         }
-        return -1;
+        return CATS_GAME;
     }
     // O - X
     // - X O

@@ -5,6 +5,7 @@ let turn = CIRCLE;
 const computerPlaysAs = CROSS;
 let selectedSquares = [];
 let ttt;
+let millisecond;
 
 function setup() {
     createCanvas(width, height);
@@ -16,7 +17,8 @@ function mousePressed() {
         return;
     }
     const index = mousePositionToIndex();
-    if (indexIsTaken(index)) {
+    console.log('index: ', index);
+    if (indexIsTaken(index) || index.x > 2 || index.y > 2) {
         return;
     }
     selectedSquares.push({...index, shape: turn});
@@ -44,23 +46,22 @@ function mousePositionToIndex() {
 function draw() {
     background(bgColor);
     drawGrid();
+    while (millis() < millisecond + 1500) {}
     if (ttt.terminalNode()) {
-        noLoop();
+        millisecond = millis();
+        highlightResult(selectedSquares);
         selectedSquares = [];
         turn = CIRCLE;
         ttt = new TicTacToeBoard(selectedSquares, CIRCLE);
-        loop();
     }
     if (turn === computerPlaysAs) {
-        noLoop();
         ttt.minMaxMoveSearch(1);
         selectedSquares.push(bitboardToSelectedSquare(ttt.computerMove));
         ttt.makeMove(ttt.computerMove);
         toggleTurn();
-        loop();
     }
     if (selectedSquares.length > 0) {
-        fillSquares(selectedSquares);
+        fillSquares(selectedSquares, 3, 3);
     }
 }
 
@@ -75,36 +76,55 @@ function drawGrid() {
     pop();
 }
 
-function fillSquares(selectedSquares) {
+function highlightResult(selectedSquares) {
+    const winningSide = ttt.whichSideIsWinning();
+    let circleWeight = 3;
+    let crossWeight = 3;
+    if (winningSide === CIRCLE) {
+        circleWeight = 7;
+        crossWeight = 1;
+    }
+    if (winningSide === CROSS) {
+        circleWeight = 1;
+        crossWeight = 7;
+    }
+    if (winningSide === CATS_GAME) {
+        circleWeight = 1;
+        crossWeight = 1;
+    }
+    fillSquares(selectedSquares, circleWeight, crossWeight);
+}
+
+function fillSquares(selectedSquares, circleWeight, crossWeight) {
     for (let i = 0; i < selectedSquares.length; i++) {
         const sq = selectedSquares[i];
         if (sq.shape === CIRCLE) {
-            drawCircle(sq.x, sq.y);
+            drawCircle(sq.x, sq.y, circleWeight);
             continue;
         }
-        drawX(sq.x, sq.y);
+        drawX(sq.x, sq.y, crossWeight);
     }
 }
 
-function drawX(x, y) {
+function drawX(x, y, weight) {
     push();
     stroke('blue');
-    strokeWeight(3);
     translate(width / 6, height / 6);
     translate(x * (width / 3), y * (height / 3));
     angleMode(DEGREES);
     rotate(45);
+    strokeWeight(weight);
     line(-width / 12, 0, width / 12, 0);
     line(0, -height / 12, 0, height / 12);
     pop();
 }
 
-function drawCircle(x, y) {
+function drawCircle(x, y, weight) {
     push();
     stroke('red');
-    strokeWeight(3);
     fill(bgColor);
     translate(x * (width / 3), y * (height / 3));
+    strokeWeight(weight);
     circle(width / 6, height / 6, width / 6);
     pop();
 }
